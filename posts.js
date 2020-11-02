@@ -1,19 +1,37 @@
-async function request(url){
+async function getPosts(url){
     try{
-        const resp = await fetch(url).then(response => response.json())
-        return resp
+        return await fetch ('http://jsonplaceholder.typicode.com/posts').then(response => response.json())
     }catch(err){
-        console.log(err)
+        return err
     }
 }
 
-async function getInfo(){
-    return await request(`https://jsonplaceholder.typicode.com/posts`);
+let btn = document.getElementsByTagName('button')[0]
+
+btn.addEventListener('click', (event) =>{
+    event.preventDefault();
+    getPosts().then(resp => {
+        renderPosts(resp)
+    });
+})
+
+function renderPosts(postsArray) {
+    let resultSection = document.getElementById('result')
+    let postsUl = document.createElement('ul')
+    postsArray.forEach(post => {
+        let postLi = createLiFromPost(post)
+        postsUl.appendChild(postLi)
+    })
+    resultSection.appendChild(postsUl)
 }
 
-function getPosts(){
-    getInfo().then(resp => console.log(resp));
+function createLiFromPost(post){
+    let postLi = document.createElement('li')
+    let title = document.createElement ('strong')
+    let titleText = document.createTextNode(post.title)
+    let contentText = document.createTextNode(post.body)
+    title.appendChild(titleText)
+    postLi.appendChild(title)
+    postLi.appendChild(contentText)
+    return postLi
 }
-
-const btn = document.querySelector("#getPosts")
-btn.addEventListener("click",getPosts)
